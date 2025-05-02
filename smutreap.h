@@ -65,22 +65,10 @@
  * para que correcoes possam ser rapidamente efetuadas.
  */
 
+typedef void *SmuTreap;
+typedef void *Node;
 typedef void *Info;
 typedef int DescritorTipoInfo;
-typedef struct aux{
-     double x,y;
-     Info info;
-     DescritorTipoInfo descritor;
-     Info bb;
-     struct aux* dir;
-     struct aux* esq;
-}Node;
-typedef struct {
-     int hitCount;
-     double promotionRate;
-     double epsilon;
-     Node* raiz;
-}SmuTreap;
 
 typedef bool (*FdentroDeRegiao)(Node n, Info i, double x1, double y1, double x2, double y2);
 /*
@@ -121,7 +109,7 @@ SmuTreap newSmuTreap(int hitCount, double promotionRate, double epsilon);
  * do no'.
  */
 
-Node insertSmuT(SmuTreap *t, double x, double y, Info i, DescritorTipoInfo d);
+Node insertSmuT(SmuTreap t, double x, double y, Info i, DescritorTipoInfo d);
 /*
  * Insere a informacao i, associada 'a ancora (x,y) na arvore t.
  * d e' um valor (definido pela aplicacao) que identifica, caso existam varias

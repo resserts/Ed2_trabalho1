@@ -1,54 +1,143 @@
 #include "smutreap.h"
 
+#include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+#include <math.h>
 
-
+typedef struct aux{
+     int prioridade;
+     double x,y;
+     Info info;
+     DescritorTipoInfo descritor;
+     Info bbinfo;
+     Info bbsa;
+     struct aux* dir;
+     struct aux* esq;
+}StNode;
+typedef struct {
+     int hitCount;
+     double promotionRate;
+     double epsilon;
+     StNode* raiz;
+}StSmutreap;
 
 SmuTreap newSmuTreap(int hitCount, double promotionRate, double epsilon){
-     SmuTreap t;
+     srand(time(NULL));
+     StSmutreap* t=(StSmutreap*)malloc(sizeof(StSmutreap));
      if(hitCount>=1){
-          t.hitCount=hitCount;
+          t->hitCount=hitCount;
      }
      if(promotionRate>0){
-          t.promotionRate=promotionRate;
+          t->promotionRate=promotionRate;
      }
-     t.epsilon=epsilon;
-     t.raiz=NULL;
+     t->epsilon=epsilon;
+     t->raiz=NULL;
+     printf("Smutreap criada\n");
      return t;
 }
 
-Node* criaNo(double x, double y, Info i, DescritorTipoInfo d){
-     Node* n=(Node*)malloc(sizeof(Node));
+Node criaNo(double x, double y, Info i, DescritorTipoInfo d){
+     StNode* n=(StNode*)malloc(sizeof(StNode));
+     n->prioridade=rand()%100;
      n->x=x;
      n->y=y;
      n->info=i;
      n->descritor=d;
-     n->bb=NULL;
+     n->bbinfo=NULL;
+     n->bbsa=NULL;
      n->dir=NULL;
      n->esq=NULL;
      return n;
 }
 
-bool igual(double x, double y, Node* r, double epsilon){
-     if(fabs(x-y)<epsilon){
+int getPrioridade(StNode* r){
+     if(r!=NULL){
+          return r->prioridade;
+     }
+     return 0;
+}
+
+bool igual(double x, double y, StNode* r, double epsilon){
+     if(fabs(x-r->x)<epsilon && fabs(y-r->y)<epsilon){
+          return true;
+     }else{
+          return false;
+     }
+}
+bool menor(double x, double y, StNode* r){
+     if(x<r->x){
+          return true;
+     }else if(y<r->y){
           return true;
      }else{
           return false;
      }
 }
 
-Node* insertAux(Smutreap* t, double x, double y, Node* r, Info i, DescritorTipoInfo d, Info bb){
-     if(r==NULL){
-          Node* n=criaNo(x, y, i, d);
-          n->bb=bb;
-          return n;
-     }
-
-     if(igual())
+StNode* rotaDireita(StNode* r){
+     StNode* q=r->esq;
+     StNode* aux=q->dir;
+     q->dir=r;
+     r->esq=aux;
+     return q;
+}
+StNode* rotaEsquerda(StNode* r){
+     StNode* q=r->dir;
+     StNode* aux=q->esq;
+     q->esq=r;
+     r->dir=aux;
+     return q;
 }
 
-Node insertSmuT(SmuTreap *t, double x, double y, Info i, DescritorTipoInfo d){
-     Node* r=t->raiz;
-     Info bb=calculaBoundingBox(Info f, DescritorTipoInfo d);
-     t->raiz=insertAux(t, x, y, r, i, d, bb);
+StNode* rebalanceie(StNode* r){
+     int prioE = getPrioridade(r->esq);
+     int prioD = getPrioridade(r->dir);
+     int prioR = getPrioridade(r);
+     int maxPrioFilhos=(prioD>prioE) ? prioD : prioE;
+     if(prioR>=maxPrioFilhos){
+          return r;
+     }
+
+     StNode* nr;
+     if(prioE>prioD){
+          nr=rotaDireita(r);
+     }else{
+          nr=rotaEsquerda(r);
+     }
+     return nr;
+}
+
+Node insertAux(StSmutreap* t, double x, double y, StNode* r, Info i, DescritorTipoInfo d, Info bb){
+     if(r==NULL){
+          StNode* n=criaNo(x, y, i, d);
+          n->bbinfo=bb;
+          n->bbsa=bb;
+          printf("%d\n", n->prioridade);
+          return n;
+     }
+     
+     StNode* nr=r;
+     if(igual(x, y, r, t->epsilon)){
+          return r;
+     }else if(menor(x, y, r)){
+          nr = insertAux(t, x, y, r->esq, i, d, bb);
+          r->esq=nr;
+     }else{
+          nr = insertAux(t, x, y, r->dir, i, d, bb);
+          r->dir=nr;
+     }
+     
+     nr=rebalanceie(r);
+     return nr;
+}
+
+Info calculabb(Info i, DescritorTipoInfo d){
+     return NULL;
+}
+Node insertSmuT(SmuTreap t, double x, double y, Info i, DescritorTipoInfo d){
+     StSmutreap* treap=t;
+     StNode* r=treap->raiz;
+     Info bb=calculabb(i, d);
+     treap->raiz=insertAux(treap, x, y, r, i, d, bb);
 }

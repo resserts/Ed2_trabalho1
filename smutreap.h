@@ -60,7 +60,7 @@
  * Modulo a ser implementado para o trabalho 1 da disciplina "Estrutura de Dados 1",
  * do curso de Bacharelado em Ciencia da Computacao da Universidade Estadual 
  * de Londrina, no primeiro semestre de 2025. Obviamente e' expressamente proibido 
- * usar ferramentas de geracao autoatica de codigo para fazer a implementacao 
+ * usar ferramentas de geracao automatica de codigo para fazer a implementacao 
  * deste modulo. Qualquer duvida ou inconsistencia, favor reportar rapidamente 
  * para que correcoes possam ser rapidamente efetuadas.
  */
@@ -70,20 +70,20 @@ typedef void *Node;
 typedef void *Info;
 typedef int DescritorTipoInfo;
 
-typedef bool (*FdentroDeRegiao)(Node n, Info i, double x1, double y1, double x2, double y2);
+typedef bool (*FdentroDeRegiao)(SmuTreap t, Node n, Info i, double x1, double y1, double x2, double y2);
 /*
  * Uma funcao deste tipo deve retornar verdadeiro se a informacao i esta'
  * "dentro" da regiao retangular delimitada pelos pontos opostos (x1,y1) e (x2,y2).
  * Retorna falso, caso contrario.
  */
 
-typedef bool (*FpontoInternoAInfo)(Node n, Info i, double x, double y);
+typedef bool (*FpontoInternoAInfo)(SmuTreap t, Node n, Info i, double x, double y);
 /*
  * Uma funcao deste tipo deve retornar verdadeiro se o ponto (x,y)
  * deva ser considerado "interno" `a informacao i.
  */
 
-typedef void (*FvisitaNo)(Node n, Info i, double x, double y, void *aux);
+typedef void (*FvisitaNo)(SmuTreap t, Node n, Info i, double x, double y, void *aux);
 /*
  * Processa a informacao i associada a um no' da arvore, cuja ancora
  * e' o ponto (x,y). O parametro aux aponta para conjunto de dados
@@ -91,7 +91,14 @@ typedef void (*FvisitaNo)(Node n, Info i, double x, double y, void *aux);
  * sucessivas invocacoes a esta funcao.
  */
 
-typedef bool (*FsearchNo)(Node n, Info i, double x, double y, void *aux);
+typedef void (*FCalculaBoundingBox)(DescritorTipoInfo tp, Info i, double *x, double *y, double *w, double *h);
+/*
+ * Calcula o bounding box da informacao i.
+ * Atribui a x,y,w,h, respectivamente, a ancora do retangulo (x,y), a largura e altura
+ * do retangulo.
+ */
+
+typedef bool (*FsearchNo)(SmuTreap t, Node n, Info i, double x, double y, void *aux);
 /*
  * Verifica se a informacao i associada a um no' da arvore, cuja ancora
  * e' o ponto (x,y) e' a informacao procurada. Retorna verdadeiro, em caso
@@ -99,6 +106,8 @@ typedef bool (*FsearchNo)(Node n, Info i, double x, double y, void *aux);
  * (provavelmente um registro) que sao compartilhados entre as
  * sucessivas invocacoes a esta funcao, incluindo (provavelmente) uma chave de busca.
  */
+
+
 
 SmuTreap newSmuTreap(int hitCount, double promotionRate, double epsilon);
 /*
@@ -109,14 +118,15 @@ SmuTreap newSmuTreap(int hitCount, double promotionRate, double epsilon);
  * do no'.
  */
 
-Node insertSmuT(SmuTreap t, double x, double y, Info i, DescritorTipoInfo d);
+Node insertSmuT(SmuTreap t, double x, double y, Info i, DescritorTipoInfo d,
+		FCalculaBoundingBox fCalcBb);
 /*
  * Insere a informacao i, associada 'a ancora (x,y) na arvore t.
  * d e' um valor (definido pela aplicacao) que identifica, caso existam varias
  * categorias, um categoria específica da informacao i.
+ * fCalcBb calcula o bounding box da informacao i.
  * Retorna um indicador para o no' inserido.
  */
-
 
 Node getNodeSmuT(SmuTreap t, double x, double y);
 /*

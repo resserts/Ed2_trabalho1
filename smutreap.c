@@ -12,7 +12,7 @@ typedef struct{
 }StBb;
 
 typedef struct aux{
-     int prioridade;
+     double prioridade;
      double x,y;
      Info info;
      DescritorTipoInfo descritor;
@@ -45,7 +45,7 @@ SmuTreap newSmuTreap(int hitCount, double promotionRate, double epsilon){
 
 Node criaNo(double x, double y, Info i, DescritorTipoInfo d){
      StNode* n=(StNode*)malloc(sizeof(StNode));
-     n->prioridade=rand()%100;
+     n->prioridade=rand()%10000;
      n->x=x;
      n->y=y;
      n->info=i;
@@ -57,7 +57,7 @@ Node criaNo(double x, double y, Info i, DescritorTipoInfo d){
      return n;
 }
 
-int getPrioridade(StNode* r){
+double getPrioridade(StNode* r){
      if(r!=NULL){
           return r->prioridade;
      }
@@ -97,10 +97,10 @@ StNode* rotaEsquerda(StNode* r){
 }
 
 StNode* rebalanceie(StNode* r){
-     int prioE = getPrioridade(r->esq);
-     int prioD = getPrioridade(r->dir);
-     int prioR = getPrioridade(r);
-     int maxPrioFilhos=(prioD>prioE) ? prioD : prioE;
+     double prioE = getPrioridade(r->esq);
+     double prioD = getPrioridade(r->dir);
+     double prioR = getPrioridade(r);
+     double maxPrioFilhos=(prioD>prioE) ? prioD : prioE;
      if(prioR>=maxPrioFilhos){
           return r;
      }
@@ -111,7 +111,7 @@ StNode* rebalanceie(StNode* r){
      }else{
           nr=rotaEsquerda(r);
      }
-     printf("retorno %d\n", nr->prioridade);
+     //printf("retorno %d\n", nr->prioridade);
      return nr;
 }
 
@@ -127,7 +127,7 @@ void simetrica(StNode* raiz){
 Node insertAux(StSmutreap* t, double x, double y, StNode* r, Info i, DescritorTipoInfo d){
      if(r==NULL){
           StNode* n=criaNo(x, y, i, d);
-          printf("%d\n", n->prioridade);
+          printf("%f\n", n->prioridade);
           return n;
      }
      
@@ -155,8 +155,112 @@ Node insertSmuT(SmuTreap t, double x, double y, Info i, DescritorTipoInfo d, FCa
      StNode* r=treap->raiz;
      treap->raiz=insertAux(treap, x, y, r, i, d);
      simetrica(treap->raiz);
-     printf("\nraiz: %d\n", treap->raiz->prioridade);
+     printf("\nraiz(%x): %d\n", treap->raiz, treap->raiz->prioridade);
 }
+
+
+StNode* getNodeaux(StNode* n, double x, double y, double epsilon){
+     if(n==NULL){
+          return NULL;
+     }
+
+     if(igual(x, y, n, epsilon)){
+          return n;
+     }else if(menor(x, y, n, epsilon)){
+          return getNodeaux(n->esq, x, y, epsilon);
+     }else{
+          return getNodeaux(n->dir, x, y, epsilon);
+     }
+}
+Node getNodeSmuT(SmuTreap t, double x, double y){
+     StSmutreap* st = (StSmutreap*)t;
+     return getNodeaux(st->raiz, x, y, st->epsilon);
+}
+
+DescritorTipoInfo getTypeInfoSrbT(SmuTreap t, Node n){
+     StNode* noaux= (StNode*)n;
+     return noaux->descritor;
+}
+
+void promoteNodeSmuT(SmuTreap t, Node n, double promotionRate){
+     StNode* node= (StNode*)n;
+     node->prioridade*=promotionRate;
+     //TODO: rebalancear de acordo com nova prioridade.
+}
+
+StNode* removeaux(StNode* raiz, StNode* n, double epsilon){
+     if(raiz==NULL){
+          return raiz;
+     }
+
+     printf("raiz(%x)->prio %f\n", raiz, raiz->prioridade);
+     StNode* nr=raiz;
+     if(raiz==n){
+          if(raiz->esq==NULL){
+               if(raiz==n){
+                    StNode* dir=raiz->dir;
+                    free(raiz);
+                    return dir;
+               }
+               if(raiz->dir==n){
+                    free(raiz->dir);
+                    raiz->dir=NULL;
+                    return raiz;
+               }
+               return raiz;
+          }
+          if(raiz->dir==NULL){
+               if(raiz==n){
+                    StNode* esq=raiz->esq;
+                    free(raiz);
+                    return esq;
+               }
+               if(raiz->esq==n){
+                    free(raiz->esq);
+                    raiz->esq=NULL;
+                    return raiz;
+               }
+               return raiz;
+          }
+          double prioD=getPrioridade(raiz->dir);
+          double prioE=getPrioridade(raiz->esq);
+          if(prioD>prioE){
+               nr=rotaEsquerda(raiz);
+               nr->esq=removeaux(nr->esq, n, epsilon);
+          }else{
+               nr=rotaDireita(raiz);
+               nr->dir=removeaux(nr->dir, n, epsilon);
+          }
+     }else{
+          if(menor(n->x, n->y, raiz, epsilon)){
+               nr->esq=removeaux(raiz->esq, n, epsilon);
+          }else{
+               nr->dir=removeaux(raiz->dir, n, epsilon);
+          }
+     }
+
+     return nr;
+}
+void removeNoSmuT(SmuTreap t, Node n){
+     StSmutreap* st=(StSmutreap*)t;
+     st->raiz=removeaux(st->raiz, n, st->epsilon);
+}
+
+Info getInfoSmuT(SmuTreap t, Node n){
+     StNode* node=(StNode*)n;
+     return node->info;
+}
+/* 
+ * Retorna a informacao associada ao no' n 
+ */
+
+Info getBoundingBoxSmuT(SmuTreap t, Node n, double *x, double *y, double *w, double *h){
+     StNode* node=(StNode*)n;
+     
+}
+/* 
+ * Retorna o bounding box associado ao no' n 
+ */
 
 int printSmuAux(StNode* n, FILE* f, int* index){
      if(n==NULL){
@@ -164,7 +268,7 @@ int printSmuAux(StNode* n, FILE* f, int* index){
      }
      *index=(*index)+1;
      int nIndex=*index;
-     fprintf(f, "\tn%d[label=\"%d\nx=%f, y=%f\"];\n", nIndex, n->prioridade, n->x, n->y);
+     fprintf(f, "\tn%d[label=\"%f\nx=%f, y=%f\"];\n", nIndex, n->prioridade, n->x, n->y);
      int i;
      if(i=printSmuAux(n->esq, f, index)){
           fprintf(f, "\tn%d->n%d;\n", nIndex, i);

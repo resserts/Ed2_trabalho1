@@ -262,6 +262,26 @@ Info getBoundingBoxSmuT(SmuTreap t, Node n, double *x, double *y, double *w, dou
  * Retorna o bounding box associado ao no' n 
  */
 
+void profundidadeaux(SmuTreap t, StNode* n, FvisitaNo f, void* aux){
+     if(n==NULL){
+          return;
+     }
+     f(t, n, n->info, n->x, n->y, aux);
+     profundidadeaux(t, n->esq, f, aux);
+     profundidadeaux(t, n->dir, f, aux);
+}
+void visitaProfundidadeSmuT(SmuTreap t, FvisitaNo f, void *aux){
+     StSmutreap* st=(StSmutreap*)t;
+     profundidadeaux(t, st->raiz, f, aux);
+}
+
+
+void visitaLarguraSmuT(SmuTreap t, FvisitaNo f, void *aux){
+     //TODO
+}
+/* Similar a visitaProfundidadeSmuT, porem, faz o percurso em largura.
+ */
+
 int printSmuAux(StNode* n, FILE* f, int* index){
      if(n==NULL){
           return 0;

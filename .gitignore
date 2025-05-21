@@ -1,5 +1,7 @@
 *.o
 *.dot
 *.png
+*.svg
 ted
 t1
+gabarito-t1

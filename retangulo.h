@@ -3,6 +3,12 @@
 
 #include "smutreap.h"
 
-Info criaRetangulo(int i, double x, double y, double w, double h, char* corb, char* corp);
+Info criaRetangulo(int id, double w, double h, char* corb, char* corp);
+
+int getRetId(Info i);
+double getRetWidth(Info i);
+double getRetHeight(Info i);
+char* getRetCorb(Info i);
+char* getRetCorp(Info i);
 
 #endif

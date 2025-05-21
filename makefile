@@ -1,7 +1,7 @@
 PROJ_NAME=ted
 ALUNO=tiagoms
 LIBS=
-OBJETOS=main.o smutreap.o
+OBJETOS=main.o smutreap.o retangulo.o circulo.o linha.o texto.o svg.o
 # compilador
 CC=gcc
 

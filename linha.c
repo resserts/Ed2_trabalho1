@@ -1,11 +1,12 @@
 #include "linha.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct{
      int id;
      double x2, y2;
-     char* cor;
+     char cor[30];
 }StLinha;
 
 Info criaLinha(int i, double x2, double y2, char* cor){
@@ -13,7 +14,7 @@ Info criaLinha(int i, double x2, double y2, char* cor){
      linha->id=i;
      linha->x2=x2;
      linha->y2=y2;
-     linha->cor=cor;
+     strcpy(linha->cor, cor);
      return linha;
 }
 

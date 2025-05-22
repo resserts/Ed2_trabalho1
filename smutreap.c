@@ -127,25 +127,20 @@ void simetrica(StNode* raiz){
 Node insertAux(StSmutreap* t, double x, double y, StNode* r, Info i, DescritorTipoInfo d){
      if(r==NULL){
           StNode* n=criaNo(x, y, i, d);
-          printf("%f\n", n->prioridade);
           return n;
      }
      
      StNode* nr=r;
      if(igual(x, y, r, t->epsilon)){
-          printf("entro igual\n");
           return r;
      }else if(menor(x, y, r, t->epsilon)){
           nr = insertAux(t, x, y, r->esq, i, d);
           r->esq=nr;
-          printf("menor: %d(%f, %f) < %d(%f, %f)\n", nr->prioridade, nr->x, nr->y, r->prioridade, r->x, r->y);
      }else{
           nr = insertAux(t, x, y, r->dir, i, d);
           r->dir=nr;
-          printf("maior: %d(%f, %f)\n", nr->prioridade, nr->x, nr->y);
      }
      
-
      nr=rebalanceie(r);
      return nr;
 }
@@ -155,7 +150,6 @@ Node insertSmuT(SmuTreap t, double x, double y, Info i, DescritorTipoInfo d, FCa
      StNode* r=treap->raiz;
      treap->raiz=insertAux(treap, x, y, r, i, d);
      simetrica(treap->raiz);
-     printf("\nraiz(%x): %d\n", treap->raiz, treap->raiz->prioridade);
 }
 
 

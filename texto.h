@@ -4,7 +4,7 @@
 #include "smutreap.h"
 
 Info criaTexto(int i, char* corb, char* corp, char a, char* texto);
-void mudaEstilo(char* fFamily, char* fWeight, int fSize);
+void mudaEstilo(char* fFamily, char* fWeight, char* fSize);
 
 int getTxtId(Info i);
 char* getTxtCorb(Info i);
@@ -13,6 +13,6 @@ char getTxtPos(Info i);
 char* getTxt(Info i);
 char* getTxtFamily(Info i);
 char* getTxtWeight(Info i);
-int getTxtSize(Info i);
+char* getTxtSize(Info i);
 
 #endif

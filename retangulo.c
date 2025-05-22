@@ -1,12 +1,13 @@
 #include "retangulo.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct{
      int id;
      double w, h;
-     char* corb;
-     char* corp;
+     char corb[30];
+     char corp[30];
 }StRetangulo;
 
 Info criaRetangulo(int i, double w, double h, char* corb, char* corp){
@@ -14,8 +15,8 @@ Info criaRetangulo(int i, double w, double h, char* corb, char* corp){
      ret->id=i;
      ret->w=w;
      ret->h=h;
-     ret->corb=corb;
-     ret->corp=corp;
+     strcpy(ret->corb, corb);
+     strcpy(ret->corp, corp);
      return ret;
 }
 

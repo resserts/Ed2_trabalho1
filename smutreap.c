@@ -149,7 +149,6 @@ Node insertSmuT(SmuTreap t, double x, double y, Info i, DescritorTipoInfo d, FCa
      StSmutreap* treap=t;
      StNode* r=treap->raiz;
      treap->raiz=insertAux(treap, x, y, r, i, d);
-     simetrica(treap->raiz);
 }
 
 

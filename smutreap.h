@@ -109,7 +109,7 @@ typedef bool (*FsearchNo)(SmuTreap t, Node n, Info i, double x, double y, void *
 
 
 
-SmuTreap newSmuTreap(int hitCount, double promotionRate, double epsilon);
+SmuTreap newSmuTreap(int hitCount, double promotionRate, double epsilon, int maxPrio);
 /*
  * Retorna uma SmuTreap vazia.
  * hitCount >= 1; promotionRate > 0.0, tipicamente e' um numero positivo maior 

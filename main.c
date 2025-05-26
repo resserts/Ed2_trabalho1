@@ -58,7 +58,7 @@ int main(int argc, char* argv[]){
           }
      }
 
-     SmuTreap s=newSmuTreap(hitCount, promotionRate, 0.001);
+     SmuTreap s=newSmuTreap(hitCount, promotionRate, 0.001, prioMax);
      char geoArq[MAX_PATH_LEN];
      strcpy(geoArq, BED);
      strcat(geoArq, geo);

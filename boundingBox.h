@@ -8,3 +8,8 @@ void calculabb(DescritorTipoInfo tp, Info i, double *x, double *y, double *w, do
  */
 
 Info criabb(double x, double y, double w, double h);
+
+double getbbx(Info i);
+double getbby(Info i);
+double getbbWidth(Info i);
+double getbbHeight(Info i);

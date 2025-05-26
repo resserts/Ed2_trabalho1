@@ -5,13 +5,16 @@
 
 typedef struct{
      int id;
+     double x1, y1;
      double x2, y2;
      char cor[30];
 }StLinha;
 
-Info criaLinha(int i, double x2, double y2, char* cor){
+Info criaLinha(int i, double x1, double y1, double x2, double y2, char* cor){
      StLinha* linha= (StLinha*)malloc(sizeof(StLinha));
      linha->id=i;
+     linha->x1=x1;
+     linha->y1=y1;
      linha->x2=x2;
      linha->y2=y2;
      strcpy(linha->cor, cor);
@@ -22,6 +25,14 @@ Info criaLinha(int i, double x2, double y2, char* cor){
 int getLinhaId(Info i){
      StLinha* ret=(StLinha*)i;
      return ret->id;
+}
+double getLinhax1(Info i){
+     StLinha* ret=(StLinha*)i;
+     return ret->x1;
+}
+double getLinhay1(Info i){
+     StLinha* ret=(StLinha*)i;
+     return ret->y1;
 }
 double getLinhax2(Info i){
      StLinha* ret=(StLinha*)i;

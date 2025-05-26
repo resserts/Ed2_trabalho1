@@ -1,4 +1,6 @@
 #include "smutreap.h"
+#include "boundingBox.h"
+#include "lista.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,12 +25,13 @@ typedef struct aux{
 }StNode;
 typedef struct {
      int hitCount;
+     int maxPrio;
      double promotionRate;
      double epsilon;
      StNode* raiz;
 }StSmutreap;
 
-SmuTreap newSmuTreap(int hitCount, double promotionRate, double epsilon){
+SmuTreap newSmuTreap(int hitCount, double promotionRate, double epsilon, int maxPrio){
      srand(time(NULL));
      StSmutreap* t=(StSmutreap*)malloc(sizeof(StSmutreap));
      if(hitCount>=1){
@@ -37,15 +40,16 @@ SmuTreap newSmuTreap(int hitCount, double promotionRate, double epsilon){
      if(promotionRate>0){
           t->promotionRate=promotionRate;
      }
+     t->maxPrio=maxPrio;
      t->epsilon=epsilon;
      t->raiz=NULL;
      printf("Smutreap criada\n");
      return t;
 }
 
-Node criaNo(double x, double y, Info i, DescritorTipoInfo d){
+Node criaNo(double x, double y, Info i, DescritorTipoInfo d, int maxPrio){
      StNode* n=(StNode*)malloc(sizeof(StNode));
-     n->prioridade=rand()%10000;
+     n->prioridade=rand()%maxPrio;
      n->x=x;
      n->y=y;
      n->info=i;
@@ -126,7 +130,8 @@ void simetrica(StNode* raiz){
 }
 Node insertAux(StSmutreap* t, double x, double y, StNode* r, Info i, DescritorTipoInfo d){
      if(r==NULL){
-          StNode* n=criaNo(x, y, i, d);
+          StSmutreap* treap=t;
+          StNode* n=criaNo(x, y, i, d, t->maxPrio);
           return n;
      }
      
@@ -274,6 +279,51 @@ void visitaLarguraSmuT(SmuTreap t, FvisitaNo f, void *aux){
 }
 /* Similar a visitaProfundidadeSmuT, porem, faz o percurso em largura.
  */
+
+
+bool ancoraDentroRegiao(StNode* n, double xmax, double xmin, double ymax, double ymin){
+     if(n->x >= xmin && n->x <= xmax && n->y >= ymin && n->y <= ymax){
+          return true;
+     }
+     return false;
+}
+void getNodesDentroaux(StNode* n, double xmax, double xmin, double ymax, double ymin, Lista l){
+     if(!ancoraDentroRegiao(n, getbbx(n->bbsa), getbbWidth(n->bbsa), getbby(n->bbsa), getbbHeight(n->bbsa))){
+         return; 
+     }
+     if(ancoraDentroRegiao(n, xmax, xmin, ymax, ymin)){
+          insertList(l, n, 0);
+          getNodesDentroaux(n->dir, xmax, xmin, ymax, ymin, l);
+          getNodesDentroaux(n->esq, xmax, xmin, ymax, ymin, l);
+     }
+}
+bool getNodesDentroRegiaoSmuT(SmuTreap t, double x1, double y1, double x2, double y2, Lista L){
+     StSmutreap* smut=t;
+     StNode* n=smut->raiz;
+     getNodesDentroaux(n, x2, x1, y2, y1, L);
+     if(getValor(L, 0)){
+          return true;
+     }
+     return false;
+}
+
+Node procuraaux(SmuTreap t, StNode* n, FsearchNo f, void* aux){
+     if(n==NULL){
+          return NULL;
+     }
+     if(f(t, n, n->info, n->x, n->y, aux)){
+          return n;
+     }
+     Node nr=NULL;
+     if(nr=procuraaux(t, n->esq, f, aux)){
+          return nr;
+     }
+     return procuraaux(t, n->dir, f, aux);
+}
+Node procuraNoSmuT(SmuTreap t, FsearchNo f, void *aux){
+     StSmutreap* smut=t;
+     return procuraaux(t, smut->raiz, f, aux);
+}
 
 int printSmuAux(StNode* n, FILE* f, int* index){
      if(n==NULL){

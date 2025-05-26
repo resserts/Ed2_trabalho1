@@ -3,9 +3,11 @@
 
 #include "smutreap.h"
 
-Info criaLinha(int i, double x2, double y2, char* corb);
+Info criaLinha(int i, double x, double y, double x2, double y2, char* corb);
 
 int getLinhaId(Info i);
+double getLinhax1(Info i);
+double getLinhay1(Info i);
 double getLinhax2(Info i);
 double getLinhay2(Info i);
 char* getLinhaCor(Info i);

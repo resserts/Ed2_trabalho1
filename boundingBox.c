@@ -56,3 +56,23 @@ Info criabb(double x, double y, double w, double h){
      bb->h=h;
      return bb;
 }
+
+double getbbx(Info i){
+     StBoundingBox* bb=i;
+     return bb->x;
+}
+double getbby(Info i){
+     StBoundingBox* bb=i;
+     return bb->y;
+}
+
+double getbbWidth(Info i){
+     StBoundingBox* bb=i;
+     return bb->w;
+}
+
+double getbbHeight(Info i){
+     StBoundingBox* bb=i;
+     return bb->h;
+}
+

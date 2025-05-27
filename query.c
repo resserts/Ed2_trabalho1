@@ -16,23 +16,6 @@ typedef struct{
      Lista l;
 }Selecao;
 
-typedef struct{
-     double x, y;
-}Ancora;
-bool igual(double x, double y, Ancora* anc, double epsilon){
-     if(fabs(x-anc->x)<epsilon && fabs(y-anc->y)<epsilon){
-          return true;
-     }else{
-          return false;
-     }
-}
-bool igualNo(SmuTreap t, Node n, Info i, double x, double y, void *aux){
-     if(igual(x, y, aux, epsilon)){
-
-     }
-}
-
-
 
 void comandosQuery(SmuTreap t, char* fn){
      printf("arquivo query: %s\n", fn);
@@ -81,7 +64,21 @@ void comandosQuery(SmuTreap t, char* fn){
                fscanf(f, "%i" , &n);
                fscanf(f, "%lf" , &x);
                fscanf(f, "%lf" , &y);
+               Node selecionado;
+               for(int i=0; getValor(listas, i); i++){
+                    Selecao* sel=getValor(listas, i);
+                    if(sel->n==n){
+                         selecionado=getNodeSmuT(t, x, y);
+                         insertList(sel->l, selecionado, 0);
+                         continue;
+                    }
+               }
+               Selecao* sel=(Selecao*)malloc(sizeof(Selecao));
+               sel->n=n;
+               selecionado=getNodeSmuT(t, x, y);
+               insertList(sel->l, selecionado, 0);
 
+               insertList(listas, sel, 0);
           }else if(strcmp(comando, "disp")==0){
                int i;
                int n;

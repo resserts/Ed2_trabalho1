@@ -24,6 +24,11 @@ Info criaRetangulo(int i, double x, double y, double w, double h, char* corb, ch
 }
 
 
+void moveRet(Info i, double x, double y){
+     StRetangulo* ret=(StRetangulo*)i;
+     ret->x=x;
+     ret->y=y;
+}
 int getRetId(Info i){
      StRetangulo* ret=(StRetangulo*)i;
      return ret->id;

@@ -1,7 +1,7 @@
 PROJ_NAME=ted
 ALUNO=tiagoms
 LIBS=
-OBJETOS=main.o smutreap.o retangulo.o circulo.o linha.o texto.o svg.o geo.o lista.o boundingBox.o
+OBJETOS=main.o smutreap.o retangulo.o circulo.o linha.o texto.o svg.o geo.o lista.o boundingBox.o query.o
 # compilador
 CC=gcc
 
@@ -9,7 +9,7 @@ CC=gcc
 
 CFLAGS= -ggdb -O0 -std=c99 -fstack-protector-all -Werror=implicit-function-declaration
 
-LDFLAGS=-O0
+LDFLAGS=-O0 -lm
 $(PROJ_NAME): $(OBJETOS)
 	$(CC) -o $(PROJ_NAME) $(LDFLAGS) $(OBJETOS) $(LIBS)
 %.o : %.c

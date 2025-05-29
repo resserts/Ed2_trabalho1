@@ -5,6 +5,7 @@
 #include "svg.h"
 #include "smutreap.h"
 #include "texto.h"
+#include "boundingBox.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -41,7 +42,7 @@ void comandosGeo(SmuTreap t, char* fn){
                fscanf(f, "%lf" , &h);
                fscanf(f, "%s" , corb);
                fscanf(f, "%s" , corp);
-               insertSmuT(t, x, y, criaRetangulo(i, x, y, w, h, corb, corp), RETANGULO, NULL);
+               insertSmuT(t, x, y, criaRetangulo(i, x, y, w, h, corb, corp), RETANGULO, &calculabb);
           }else if(strcmp(comando, "c")==0){
                int i;
                double x, y;
@@ -54,7 +55,7 @@ void comandosGeo(SmuTreap t, char* fn){
                fscanf(f, "%lf" , &r);
                fscanf(f, "%s" , corb);
                fscanf(f, "%s" , corp);
-               insertSmuT(t, x, y, criaCirculo(i, x, y, r, corb, corp), CIRCULO, NULL);
+               insertSmuT(t, x, y, criaCirculo(i, x, y, r, corb, corp), CIRCULO, &calculabb);
           }else if(strcmp(comando, "l")==0){
                int i;
                double x, y;
@@ -66,7 +67,7 @@ void comandosGeo(SmuTreap t, char* fn){
                fscanf(f, "%lf" , &x2);
                fscanf(f, "%lf" , &y2);
                fscanf(f, "%s" , cor);
-               insertSmuT(t, x, y, criaLinha(i, x, y, x2, y2, cor), LINHA, NULL);
+               insertSmuT(t, x, y, criaLinha(i, x, y, x2, y2, cor), LINHA, &calculabb);
           }else if(strcmp(comando, "t")==0){
                int i;
                double x, y;
@@ -86,7 +87,7 @@ void comandosGeo(SmuTreap t, char* fn){
                     texto[i]=texto[i+1];
                }
                texto[len-2]='\0';
-               insertSmuT(t, x, y, criaTexto(i, corb, corp, a, texto), TEXTO, NULL);
+               insertSmuT(t, x, y, criaTexto(i, x, y, corb, corp, a, texto), TEXTO, &calculabb);
           }
      }
 

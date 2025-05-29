@@ -5,6 +5,7 @@
 #include "texto.h"
 #include "smutreap.h"
 #include "geo.h"
+#include "query.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,7 +21,7 @@ void calcbb(DescritorTipoInfo tp, Info i, double *x, double *y, double *w, doubl
 int main(int argc, char* argv[]){
      printf("argc: %i\n", argc);
      char BED[MAX_PATH_LEN]="./";
-     char BSD[MAX_PATH_LEN];
+     char BSD[MAX_PATH_LEN]="./";
      char geo[MAX_PATH_LEN];
      char query[MAX_PATH_LEN];
      char arq[MAX_PATH_LEN];
@@ -36,7 +37,7 @@ int main(int argc, char* argv[]){
                i++;
                strcpy(geo, argv[i]);
                strcpy(arq, geo);
-               arq[strlen(arq)-5]='\0';
+               arq[strlen(arq)-4]='\0';
           }else if(strcmp(argv[i], "-e")==0){
                i++;
                strcpy(BED, argv[i]);
@@ -64,6 +65,14 @@ int main(int argc, char* argv[]){
      strcat(geoArq, geo);
      comandosGeo(s, geoArq);
 
+     char queryArq[MAX_PATH_LEN];
+     strcpy(queryArq, BED);
+     strcat(queryArq, query);
+     char saida[MAX_PATH_LEN];
+     strcpy(saida, BSD);
+     strcat(saida, arq);
+     comandosQuery(s, queryArq, saida);
+
      char dotArq[MAX_PATH_LEN];
      strcpy(dotArq, BSD);
      strcat(dotArq, arq);
@@ -74,7 +83,7 @@ int main(int argc, char* argv[]){
      strcpy(svgArq, BSD);
      strcat(svgArq, arq);
      strcat(svgArq, ".svg");
-     gerarSvg(s, svgArq);
+     gerarSvg(s, svgArq, NULL);
 
      return 0;
 }

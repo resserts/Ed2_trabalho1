@@ -5,6 +5,7 @@
 
 Info criaRetangulo(int id, double x, double y, double w, double h, char* corb, char* corp);
 
+void moveRet(Info i, double x, double y);
 int getRetId(Info i);
 double getRetX(Info i);
 double getRetY(Info i);

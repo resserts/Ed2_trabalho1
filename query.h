@@ -2,6 +2,6 @@
 #define _QUERY_H
 #include "smutreap.h"
 
-void comandosQuery(SmuTreap t, char* fn);
+void comandosQuery(SmuTreap t, char* fn, char* saida);
 
 #endif

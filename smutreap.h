@@ -210,5 +210,8 @@ void killSmuTreap(SmuTreap t);
 /* Libera a memoria usada pela arvore t.
  */
 
+double getEpsilon(SmuTreap t);
+// retorna epsilon da smutreap t.
+
 #endif
 

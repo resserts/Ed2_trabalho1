@@ -9,10 +9,6 @@
 #include <math.h>
 
 
-typedef struct{
-     double x, y, h, w;
-}StBb;
-
 typedef struct aux{
      double prioridade;
      double x,y;
@@ -54,8 +50,11 @@ Node criaNo(double x, double y, Info i, DescritorTipoInfo d, int maxPrio){
      n->y=y;
      n->info=i;
      n->descritor=d;
-     n->bbinfo=NULL;
-     n->bbsa=NULL;
+     double bbx, bby, w, h;
+
+     calculabb(d, i, &bbx, &bby, &w, &h);
+     n->bbinfo=criabb(bbx, bby, w, h);
+     n->bbsa=criabb(bbx, bby, w, h);
      n->dir=NULL;
      n->esq=NULL;
      return n;
@@ -147,6 +146,13 @@ Node insertAux(StSmutreap* t, double x, double y, StNode* r, Info i, DescritorTi
      }
      
      nr=rebalanceie(r);
+     if(nr->dir){
+          uniaobb(nr->bbsa, nr->dir->bbsa, NULL);
+     }
+     if (nr->esq) {
+          uniaobb(nr->bbsa, NULL, nr->esq->bbsa);
+     
+     }
      return nr;
 }
 
@@ -154,6 +160,7 @@ Node insertSmuT(SmuTreap t, double x, double y, Info i, DescritorTipoInfo d, FCa
      StSmutreap* treap=t;
      StNode* r=treap->raiz;
      treap->raiz=insertAux(treap, x, y, r, i, d);
+     return getNodeSmuT(t, x, y);
 }
 
 
@@ -191,7 +198,7 @@ StNode* removeaux(StNode* raiz, StNode* n, double epsilon){
           return raiz;
      }
 
-     printf("raiz(%x)->prio %f\n", raiz, raiz->prioridade);
+     //printf("raiz(%x)->prio %f\n", raiz, raiz->prioridade);
      StNode* nr=raiz;
      if(raiz==n){
           if(raiz->esq==NULL){
@@ -248,16 +255,34 @@ Info getInfoSmuT(SmuTreap t, Node n){
      StNode* node=(StNode*)n;
      return node->info;
 }
-/* 
- * Retorna a informacao associada ao no' n 
- */
 
 Info getBoundingBoxSmuT(SmuTreap t, Node n, double *x, double *y, double *w, double *h){
      StNode* node=(StNode*)n;
-     
+     return node->bbinfo;     
 }
-/* 
- * Retorna o bounding box associado ao no' n 
+
+void getInfoAtingidoaux(StSmutreap* t, StNode* n, double x, double y, FpontoInternoAInfo f, Lista l){
+     if(n==NULL){
+          return;
+     }
+     if(f(t, n, n->info, x, y)){
+          insertList(l, n, 0);
+     }
+     getInfoAtingidoaux(t, n->dir, x, y, f, l);
+     getInfoAtingidoaux(t, n->esq, x, y, f, l);
+}
+bool getInfosAtingidoPontoSmuT(SmuTreap t, double x, double y, FpontoInternoAInfo f, Lista L){
+     StSmutreap* smut=t;
+     getInfoAtingidoaux(t, smut->raiz, x, y, f, L);
+     if(getValor(L, 0)){
+          return true;
+     }
+     return false;
+}
+/* Insere na lista L  os nos para os quais o ponto (x,y) possa ser considerado
+  interno 'as  informacoes associadas ao no'. A funcao f e' invocada para determinar
+  se o ponto (x,y) e' interno a uma informacao especifica.
+  Retorna falso caso nao existam informacoes internas; verdadeiro, caso contrario.
  */
 
 void profundidadeaux(SmuTreap t, StNode* n, FvisitaNo f, void* aux){
@@ -288,6 +313,9 @@ bool ancoraDentroRegiao(StNode* n, double xmax, double xmin, double ymax, double
      return false;
 }
 void getNodesDentroaux(StNode* n, double xmax, double xmin, double ymax, double ymin, Lista l){
+     if(n==NULL){
+          return;
+     }
      if(!ancoraDentroRegiao(n, getbbx(n->bbsa), getbbWidth(n->bbsa), getbby(n->bbsa), getbbHeight(n->bbsa))){
          return; 
      }
@@ -301,6 +329,32 @@ bool getNodesDentroRegiaoSmuT(SmuTreap t, double x1, double y1, double x2, doubl
      StSmutreap* smut=t;
      StNode* n=smut->raiz;
      getNodesDentroaux(n, x2, x1, y2, y1, L);
+     if(getValor(L, 0)){
+          return true;
+     }
+     return false;
+}
+
+void getInfosDentroaux(StSmutreap* t, StNode* n, double x1, double y1, double x2, double y2, FdentroDeRegiao f, Lista L){
+     if(n==NULL){
+          return;
+     }
+    // if(bbDentro(t, n, n->bbsa, x1, y1, x2, y2)){
+    //      return;
+    // }
+     if(f(t, n, n->bbinfo, x1, y1, x2, y2)){
+          printf("entro para inserir %i\n", getTypeInfoSrbT(t, n));
+          insertList(L, n, 0);
+     }
+     getInfosDentroaux(t, n->dir, x1, y1, x2, y2, f, L);
+     getInfosDentroaux(t, n->esq, x1, y1, x2, y2, f, L);
+}
+bool getInfosDentroRegiaoSmuT(SmuTreap t, double x1, double y1, double x2, double y2,
+				 FdentroDeRegiao f, Lista L){
+     StSmutreap* smut=t;
+     StNode* n=smut->raiz;
+     getInfosDentroaux(smut, n, x1, y1, x2, y2, f, L);
+
      if(getValor(L, 0)){
           return true;
      }
@@ -359,3 +413,7 @@ bool printDotSmuTreap(SmuTreap t, char *fn){
 }
 
 
+double getEpsilon(SmuTreap t){
+     StSmutreap* smut=t;
+     return smut->epsilon;
+}

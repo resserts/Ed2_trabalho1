@@ -22,6 +22,15 @@ Info criaLinha(int i, double x1, double y1, double x2, double y2, char* cor){
 }
 
 
+void moveLinha(Info i, double x, double y){
+     StLinha* ret=(StLinha*)i;
+     ret->x2-=ret->x1;
+     ret->y2-=ret->y1;
+     ret->x1=x;
+     ret->y1=y;
+     ret->x2+=ret->x1;
+     ret->y2+=ret->y1;
+}
 int getLinhaId(Info i){
      StLinha* ret=(StLinha*)i;
      return ret->id;

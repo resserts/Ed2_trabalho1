@@ -20,11 +20,14 @@ Info criaCirculo(int i, double x, double y, double r, char* corb, char* corp){
      circ->r=r;
      strcpy(circ->corb, corb);
      strcpy(circ->corp, corp);
-     printf("Circulo criado corb: %s\n", circ->corb);
-     printf("Circulo criado corp: %s\n", circ->corp);
      return circ;
 }
 
+void moveCirc(Info i, double x, double y){
+     StCirculo* ret=(StCirculo*)i;
+     ret->x=x;
+     ret->y=y;
+}
 
 int getCircId(Info i){
      StCirculo* ret=(StCirculo*)i;

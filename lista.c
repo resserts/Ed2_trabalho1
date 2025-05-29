@@ -72,12 +72,12 @@ void* getValor(Lista l, int index){
      if(index<=0){
           return n->no;
      }
-     for (int i=1; n->prox && i<index; i++) {
+     for (int i=1; n && i<index; i++) {
           n=n->prox;
+     }
+     if(n==NULL){
+          return NULL;
      }
 
      return n->no;
 }
-/* Retorna o no apontado pelo elemento na posição index, caso exista, ou no fim se for um valor positivo
- * e no início se for um valor negativo.
-*/

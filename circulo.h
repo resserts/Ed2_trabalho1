@@ -5,6 +5,7 @@
 
 Info criaCirculo(int i, double x, double y, double r, char* corb, char* corp);
 
+void moveCirc(Info i, double x, double y);
 int getCircId(Info i);
 double getCircx(Info i);
 double getCircy(Info i);

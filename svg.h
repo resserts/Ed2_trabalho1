@@ -8,7 +8,9 @@
 #include "texto.h"
 
 enum tipo{RETANGULO, CIRCULO, LINHA, TEXTO};
+typedef void* Letra;
 
-void gerarSvg(SmuTreap t, char* fn);
+Letra criaLetra(double x, double y, char l);
+void gerarSvg(SmuTreap t, char* fn, Lista letras);
 
 #endif

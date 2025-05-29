@@ -21,8 +21,7 @@ void removeList(Lista l, int index);
 */
 
 void* getValor(Lista l, int index);
-/* Retorna o no apontado pelo elemento na posição index, caso exista, ou no fim se for um valor positivo
- * e no início se for um valor negativo.
+/* Retorna o no apontado pelo elemento na posição index, caso exista, ou no início se for um valor negativo.
 */
 
 #endif

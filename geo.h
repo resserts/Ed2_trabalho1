@@ -4,5 +4,6 @@
 #include "smutreap.h"
 
 void comandosGeo(SmuTreap t, char* fn);
+// Executa os comandos do arquivo geo fn na smuTreap t.
 
 #endif

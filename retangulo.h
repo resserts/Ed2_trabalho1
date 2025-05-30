@@ -11,6 +11,7 @@ Info criaRetangulo(int id, double x, double y, double w, double h, char* corb, c
 void moveRet(Info i, double x, double y);
 // Move o retangulo i para (x,y).
 
+// Retornam os atributos do retangulo i.
 int getRetId(Info i);
 double getRetX(Info i);
 double getRetY(Info i);

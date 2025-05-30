@@ -279,11 +279,7 @@ bool getInfosAtingidoPontoSmuT(SmuTreap t, double x, double y, FpontoInternoAInf
      }
      return false;
 }
-/* Insere na lista L  os nos para os quais o ponto (x,y) possa ser considerado
-  interno 'as  informacoes associadas ao no'. A funcao f e' invocada para determinar
-  se o ponto (x,y) e' interno a uma informacao especifica.
-  Retorna falso caso nao existam informacoes internas; verdadeiro, caso contrario.
- */
+
 
 void profundidadeaux(SmuTreap t, StNode* n, FvisitaNo f, void* aux){
      if(n==NULL){
@@ -412,6 +408,28 @@ bool printDotSmuTreap(SmuTreap t, char *fn){
      return true;
 }
 
+void killaux(StNode* n){
+	if(n==NULL){
+		return;
+	}
+	killaux(n->esq);
+	killaux(n->dir);
+
+	if(n->info){
+		free(n->info);
+	}
+	if(n->bbinfo){
+		free(n->bbinfo);
+	}
+	if(n->bbsa){
+		free(n->bbsa);
+	}
+	free(n);
+}
+void killSmuTreap(SmuTreap t){
+     StSmutreap* smut=t;
+	killaux(t->raiz);
+}
 
 double getEpsilon(SmuTreap t){
      StSmutreap* smut=t;

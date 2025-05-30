@@ -4,6 +4,7 @@
 #include "smutreap.h"
 
 Info criaLinha(int i, double x, double y, double x2, double y2, char* corb);
+// Retorna o ponteiro para a linha com id=i, ancora=(x,y)
 
 void moveLinha(Info i, double x, double y);
 int getLinhaId(Info i);

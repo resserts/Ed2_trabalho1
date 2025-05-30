@@ -187,6 +187,32 @@ DescritorTipoInfo getTypeInfoSrbT(SmuTreap t, Node n){
      return noaux->descritor;
 }
 
+Node promoteaux(){
+if(r==NULL){
+          return r;
+     }
+     
+     StNode* nr=r;
+     if(igual(x, y, r, t->epsilon)){
+          return r;
+     }else if(menor(x, y, r, t->epsilon)){
+          nr = promoteaux(t, x, y, r->esq, i, d);
+          r->esq=nr;
+     }else{
+          nr = promoteaux(t, x, y, r->dir, i, d);
+          r->dir=nr;
+     }
+     
+     nr=rebalanceie(r);
+     if(nr->dir){
+          uniaobb(nr->bbsa, nr->dir->bbsa, NULL);
+     }
+     if (nr->esq) {
+          uniaobb(nr->bbsa, NULL, nr->esq->bbsa);
+     
+     }
+     return nr;
+}
 void promoteNodeSmuT(SmuTreap t, Node n, double promotionRate){
      StNode* node= (StNode*)n;
      node->prioridade*=promotionRate;

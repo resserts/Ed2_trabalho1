@@ -85,5 +85,6 @@ int main(int argc, char* argv[]){
      strcat(svgArq, ".svg");
      gerarSvg(s, svgArq, NULL);
 
+     killSmuTreap(s);
      return 0;
 }

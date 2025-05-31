@@ -7,7 +7,7 @@ CC=gcc
 
 # Flags
 
-CFLAGS= -ggdb -O0 -std=c99 -fstack-protector-all -Werror=implicit-function-declaration
+CFLAGS= -g -O0 -std=c99 -fstack-protector-all -Werror=implicit-function-declaration
 
 LDFLAGS=-O0
 $(PROJ_NAME): $(OBJETOS)

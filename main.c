@@ -13,10 +13,11 @@
 
 #define MAX_PATH_LEN 255
 
-void calcbb(DescritorTipoInfo tp, Info i, double *x, double *y, double *w, double *h){
-     return;
-}
 
+
+void testeVisita(SmuTreap t, Node n, Info i, double x, double y, void *aux){
+     printf("%lf, %lf\n", x, y);
+}
 
 int main(int argc, char* argv[]){
      printf("argc: %i\n", argc);
@@ -85,6 +86,7 @@ int main(int argc, char* argv[]){
      strcat(svgArq, ".svg");
      gerarSvg(s, svgArq, NULL);
 
+     visitaLarguraSmuT(s, &testeVisita, NULL);
      killSmuTreap(s);
      return 0;
 }

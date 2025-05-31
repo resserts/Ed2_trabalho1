@@ -12,6 +12,7 @@
 
 typedef struct aux{
      double prioridade;
+     int hitCount;
      double x,y;
      Info info;
      DescritorTipoInfo descritor;
@@ -47,6 +48,7 @@ SmuTreap newSmuTreap(int hitCount, double promotionRate, double epsilon, int max
 Node criaNo(double x, double y, Info i, DescritorTipoInfo d, int maxPrio){
      StNode* n=(StNode*)malloc(sizeof(StNode));
      n->prioridade=rand()%maxPrio;
+     n->hitCount=0;
      n->x=x;
      n->y=y;
      n->info=i;
@@ -161,6 +163,8 @@ Node insertSmuT(SmuTreap t, double x, double y, Info i, DescritorTipoInfo d, FCa
      StSmutreap* treap=t;
      StNode* r=treap->raiz;
      treap->raiz=insertAux(treap, x, y, r, i, d);
+     StNode* n=getNodeSmuT(t, x, y);
+     printf("(x: %f, y: %f): %f, %f, %f, %f\n", n->x, n->y, getbbx(n->bbsa), getbby(n->bbsa), getbbWidth(n->bbsa), getbbHeight(n->bbsa));
      return getNodeSmuT(t, x, y);
 }
 
@@ -180,7 +184,15 @@ StNode* getNodeaux(StNode* n, double x, double y, double epsilon){
 }
 Node getNodeSmuT(SmuTreap t, double x, double y){
      StSmutreap* st = (StSmutreap*)t;
-     return getNodeaux(st->raiz, x, y, st->epsilon);
+     StNode* n=getNodeaux(st->raiz, x, y, st->epsilon);
+     if(n){
+          n->hitCount++;
+          if(n->hitCount==st->hitCount){
+               promoteNodeSmuT(t, n, st->promotionRate);
+               n->hitCount=0;
+          }
+     }
+     return n;
 }
 
 DescritorTipoInfo getTypeInfoSrbT(SmuTreap t, Node n){
@@ -219,7 +231,6 @@ void promoteNodeSmuT(SmuTreap t, Node n, double promotionRate){
      node->prioridade*=promotionRate;
      StSmutreap* smut=t;
      smut->raiz=promoteaux(smut, node->x, node->y, smut->raiz);
-     //TODO: rebalancear de acordo com nova prioridade.
 }
 
 StNode* removeaux(StNode* raiz, StNode* n, double epsilon){
@@ -277,6 +288,16 @@ StNode* removeaux(StNode* raiz, StNode* n, double epsilon){
 }
 void removeNoSmuT(SmuTreap t, Node n){
      StSmutreap* st=(StSmutreap*)t;
+     StNode* stn=n;
+     if(stn->info){
+          free(stn->info);
+     }
+     if(stn->bbinfo){
+          free(stn->bbinfo);
+     }
+     if(stn->bbsa){
+          free(stn->bbsa);
+     }
      st->raiz=removeaux(st->raiz, n, st->epsilon);
 }
 
@@ -327,12 +348,29 @@ void visitaProfundidadeSmuT(SmuTreap t, FvisitaNo f, void *aux){
      profundidadeaux(t, st->raiz, f, aux);
 }
 
+const int ULTIMO=999999999;
+void larguraaux(SmuTreap t, StNode* n, FvisitaNo f, void* aux, Lista l){
+     if(n==NULL){
+          return;
+     }
+     if(n->dir){
+          insertList(l, n->dir, ULTIMO);
+     }
+     if(n->esq){
+          insertList(l, n->esq, ULTIMO);
+     }
+     f(t, n, n->info, n->x, n->y, aux);
+     removeList(l, 0);
+     larguraaux(t, getValor(l, 0), f, aux, l);
 
-void visitaLarguraSmuT(SmuTreap t, FvisitaNo f, void *aux){
-     //TODO
 }
-/* Similar a visitaProfundidadeSmuT, porem, faz o percurso em largura.
- */
+void visitaLarguraSmuT(SmuTreap t, FvisitaNo f, void *aux){
+     StSmutreap* smut=t;
+     Lista l=criaLista();
+     insertList(l, smut->raiz, ULTIMO);
+     larguraaux(t, smut->raiz, f, aux, l);
+     killLista(l);
+}
 
 
 bool ancoraDentroRegiao(StNode* n, double xmax, double xmin, double ymax, double ymin){
@@ -368,9 +406,9 @@ void getInfosDentroaux(StSmutreap* t, StNode* n, double x1, double y1, double x2
      if(n==NULL){
           return;
      }
-    // if(bbDentro(t, n, n->bbsa, x1, y1, x2, y2)){
-    //      return;
-    // }
+     if(getbbx(n->bbsa)>x2 || getbbx(n->bbsa)+getbbWidth(n->bbsa)<x1 || getbby(n->bbsa)>y2 || getbby(n->bbsa)+getbbHeight(n->bbsa)<y1){
+          return;
+     }
 
      
      if(f(t, n, n->bbinfo, x1, y1, x2, y2)){
@@ -430,7 +468,15 @@ Node procuraaux(SmuTreap t, StNode* n, FsearchNo f, void* aux){
 }
 Node procuraNoSmuT(SmuTreap t, FsearchNo f, void *aux){
      StSmutreap* smut=t;
-     return procuraaux(t, smut->raiz, f, aux);
+     StNode* n=procuraaux(t, smut->raiz, f, aux);
+     if(n){
+          n->hitCount++;
+          if(n->hitCount==smut->hitCount){
+               promoteNodeSmuT(t, n, smut->promotionRate);
+               n->hitCount=0;
+          }
+     }
+     return n;
 }
 
 int printSmuAux(StNode* n, FILE* f, int* index){
@@ -487,6 +533,7 @@ void killaux(StNode* n){
 void killSmuTreap(SmuTreap t){
      StSmutreap* smut=t;
 	killaux(smut->raiz);
+     free(t);
 }
 
 double getEpsilon(SmuTreap t){

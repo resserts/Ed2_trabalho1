@@ -165,6 +165,7 @@ void disp(SmuTreap t, Lista listas, int id, int n, char* saida){
                     Letra excluir=getValor(letras, k);
                     free(excluir);
                }
+               killLista(destruir);
                killLista(letras);
                break;
           }
@@ -261,7 +262,7 @@ void comandosQuery(SmuTreap t, char* fn, char* saida){
      remove(transpfn);
      char slrfn[256];
      strcpy(slrfn, saida);
-     strcat(slrfn, "-slr.txt");
+     strcat(slrfn, "-selr.txt");
      remove(slrfn);
      while(fscanf(f, "%s", comando)!=EOF){
           printf("comando: %s\n", comando);
@@ -333,6 +334,10 @@ seleciona:
                removeNoSmuT(t, ret);
                //slrfn[strlen(slrfn)-4]='\0';
                //strcat(slrfn, ".txt");
+               for(int i=0; getValor(letras, i); i++){
+                    free(getValor(letras, i));
+               }
+               killLista(letras);
           }else if(strcmp(comando, "seli")==0){
                int n;
                double x, y;
@@ -499,7 +504,14 @@ seleciona:
                blow(t, id, saida);
 
           }
+
      }
+     for (int i=0; getValor(listas, i); i++) {
+          Selecao* sel=getValor(listas, i);
+          killLista(sel->l);
+          free(sel);
+     }
+     killLista(listas);
 
      fclose(f);
 }

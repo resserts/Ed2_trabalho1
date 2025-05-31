@@ -90,4 +90,5 @@ void gerarSvg(SmuTreap t, char* fn, Lista letras){
      }
 
      fprintf(f, "</svg>\n"); 
+     fclose(f);
 }

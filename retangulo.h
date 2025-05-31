@@ -18,6 +18,8 @@ double getRetY(Info i);
 double getRetWidth(Info i);
 double getRetHeight(Info i);
 char* getRetCorb(Info i);
+float getRetStrokew(Info i);
 char* getRetCorp(Info i);
 
+void setRetColors(Info i, char* corb, char* corp, float strokeWidth);
 #endif

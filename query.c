@@ -183,7 +183,11 @@ void spy(SmuTreap t, int id, char* saida){
      }else{
           double x, y, w, h;
           getBoundingBoxSmuT(t, n, &x, &y, &w, &h);
-          getInfosDentroRegiaoSmuT(t, x, y, x+w, y+h, &bbDentro, dentro);
+
+          printf("%f, %f, %f, %f\n", x, y, w, h);
+          if(getInfosDentroRegiaoSmuT(t, x, y, x+w, y+h, &bbDentro, dentro)){
+               printf("acho pelo menos um\n");
+          }
      }
      FILE* f=fopen(saida, "a");
      if(f==NULL){
@@ -247,6 +251,10 @@ void comandosQuery(SmuTreap t, char* fn, char* saida){
      strcpy(spyfn, saida);
      strcat(spyfn, "-spy.txt");
      remove(spyfn);
+     char cmflgfn[256];
+     strcpy(cmflgfn, saida);
+     strcat(cmflgfn, "-cmflg.txt");
+     remove(cmflgfn);
      char transpfn[256];
      strcpy(transpfn, saida);
      strcat(transpfn, "-transp.txt");
@@ -257,15 +265,7 @@ void comandosQuery(SmuTreap t, char* fn, char* saida){
      remove(slrfn);
      while(fscanf(f, "%s", comando)!=EOF){
           printf("comando: %s\n", comando);
-          if(strcmp(comando, "ts")==0){
-               char family[30];
-               char weight[3];
-               char size[6];
-               fscanf(f, "%s", family);
-               fscanf(f, "%s", weight);
-               fscanf(f, "%s", size);
-               printf("final ts %s | %s | %s\n", family, weight, size);
-          }else if(strcmp(comando, "selr")==0){
+          if(strcmp(comando, "selr")==0){
                int n;
                double x, y;
                double w, h;
@@ -285,7 +285,10 @@ void comandosQuery(SmuTreap t, char* fn, char* saida){
                }
                sel=criaSelecao(n);
 seleciona:
-               getInfosDentroRegiaoSmuT(t, x, y, w, h, &bbDentro, sel->l);
+               //printf("x: %f, y: %f, w:");
+               if(getInfosDentroRegiaoSmuT(t, x, y, x+w, y+h, &bbDentro, sel->l)){
+                    printf("acho info");
+               }
                Lista letras=criaLista();
                FILE* slrf=fopen(slrfn, "a");
                for(int i=0; getValor(sel->l, i); i++){
@@ -459,14 +462,37 @@ seleciona:
                fscanf(f, "%i" , &id);
                spy(t, id, spyfn);
           }else if(strcmp(comando, "cmflg")==0){
-               int i;
+               int id;
                char corb[30];
                char corp[30];
-               char w[30];
-               fscanf(f, "%i" , &i);
+               float w;
+               fscanf(f, "%i" , &id);
                fscanf(f, "%s" , corb);
                fscanf(f, "%s" , corp);
-               fscanf(f, "%s" , w);
+               fscanf(f, "%f" , &w);
+               spy(t, id, cmflgfn);
+               Node n=procuraNoSmuT(t, &noComId, &id);
+               if(n==NULL){
+                    continue;
+               }
+               printf("acho o no\n");
+               DescritorTipoInfo dt=getTypeInfoSrbT(t, n);
+               Info inf=getInfoSmuT(t, n);
+               switch (dt) {
+                    case RETANGULO:
+                         setRetColors(inf, corb, corp, w);
+                         break;
+                    case CIRCULO:
+                         setCircColors(inf, corb, corp, w);
+                         break;
+                    case LINHA:
+                         break;
+                    case TEXTO:
+                         setTxtColors(inf, corb, corp, w);
+                         break;
+                    default:
+                         break;
+               }
           }else if(strcmp(comando, "blow")==0){
                int id;
                fscanf(f, "%i" , &id);

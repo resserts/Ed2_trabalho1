@@ -21,6 +21,7 @@ int getTxtId(Info i);
 double getTxtx(Info i);
 double getTxty(Info i);
 char* getTxtCorb(Info i);
+float getTxtStrokew(Info i);
 char* getTxtCorp(Info i);
 char getTxtPos(Info i);
 char* getTxt(Info i);
@@ -28,4 +29,5 @@ char* getTxtFamily(Info i);
 char* getTxtWeight(Info i);
 char* getTxtSize(Info i);
 
+void setTxtColors(Info i, char* corb, char* corp, float strokeWidth);
 #endif

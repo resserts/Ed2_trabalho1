@@ -8,6 +8,7 @@ typedef struct{
      double x, y;
      double w, h;
      char corb[30];
+     float strokeWidth;
      char corp[30];
 }StRetangulo;
 
@@ -19,6 +20,7 @@ Info criaRetangulo(int i, double x, double y, double w, double h, char* corb, ch
      ret->w=w;
      ret->h=h;
      strcpy(ret->corb, corb);
+     ret->strokeWidth=1;
      strcpy(ret->corp, corp);
      return ret;
 }
@@ -53,7 +55,18 @@ char* getRetCorb(Info i){
      StRetangulo* ret=(StRetangulo*)i;
      return ret->corb;
 }
+float getRetStrokew(Info i){
+     StRetangulo* ret=(StRetangulo*)i;
+     return ret->strokeWidth;
+}
 char* getRetCorp(Info i){
      StRetangulo* ret=(StRetangulo*)i;
      return ret->corp;
+}
+
+void setRetColors(Info i, char* corb, char* corp, float strokeWidth){
+     StRetangulo* ret=(StRetangulo*)i;
+     strcpy(ret->corb, corb);
+     strcpy(ret->corp, corp);
+     ret->strokeWidth=strokeWidth;
 }

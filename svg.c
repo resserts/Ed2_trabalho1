@@ -31,16 +31,16 @@ void svgNo(SmuTreap t, Node n, Info i, double x, double y, void *aux){
      DescritorTipoInfo tipo=getTypeInfoSrbT(t, n);
      switch (tipo) {
           case RETANGULO:
-               fprintf(aux, "<rect x=\"%f\" y=\"%f\" width=\"%f\" height=\"%f\" stroke=\"%s\" fill=\"%s\" ",
-                         x, y, getRetWidth(i), getRetHeight(i), getRetCorb(i), getRetCorp(i));
+               fprintf(aux, "<rect x=\"%f\" y=\"%f\" width=\"%f\" height=\"%f\" stroke=\"%s\" stroke-width=\"%f\" fill=\"%s\" ",
+                         x, y, getRetWidth(i), getRetHeight(i), getRetCorb(i), getRetStrokew(i), getRetCorp(i));
                if(getRetId(i)==-1){
                     fprintf(aux, "fill-opacity=\"0\" ");
                }
                fprintf(aux, "/>\n"); 
                break;
           case CIRCULO:
-               fprintf(aux, "<circle cx=\"%f\" cy=\"%f\" r=\"%f\" stroke=\"%s\" fill=\"%s\" />\n",
-                         x, y, getCircRaio(i), getCircCorb(i), getCircCorp(i));
+               fprintf(aux, "<circle cx=\"%f\" cy=\"%f\" r=\"%f\" stroke=\"%s\" stroke-width=\"%f\" fill=\"%s\" />\n",
+                         x, y, getCircRaio(i), getCircCorb(i), getCircStrokew(i), getCircCorp(i));
                break;
           case LINHA:
                fprintf(aux, "<line x1=\"%f\" y1=\"%f\" x2=\"%f\" y2=\"%f\" stroke=\"%s\" />\n",
@@ -67,8 +67,8 @@ void svgNo(SmuTreap t, Node n, Info i, double x, double y, void *aux){
                     strcpy(anchor, "end");
                }
 
-               fprintf(aux, "<text x=\"%f\" y=\"%f\" stroke=\"%s\" fill=\"%s\" font-family=\"%s\" font-size=\"%s\" font-weight=\"%s\" text-anchor=\"%s\" >%s</text>\n",
-                         x, y, getTxtCorb(i), getTxtCorp(i), getTxtFamily(i), 
+               fprintf(aux, "<text x=\"%f\" y=\"%f\" stroke=\"%s\" stroke-width=\"%f\" fill=\"%s\" font-family=\"%s\" font-size=\"%s\" font-weight=\"%s\" text-anchor=\"%s\" >%s</text>\n",
+                         x, y, getTxtCorb(i), getTxtStrokew(i), getTxtCorp(i), getTxtFamily(i), 
                          getTxtSize(i), fontWeight, anchor, getTxt(i));
                break;
           default:

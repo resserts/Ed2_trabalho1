@@ -9,6 +9,7 @@ typedef struct{
      double x, y;
      double r;
      char corb[30];
+     float strokeWidth;
      char corp[30];
 }StCirculo;
 
@@ -19,6 +20,7 @@ Info criaCirculo(int i, double x, double y, double r, char* corb, char* corp){
      circ->y=y;
      circ->r=r;
      strcpy(circ->corb, corb);
+     circ->strokeWidth=1;
      strcpy(circ->corp, corp);
      return circ;
 }
@@ -49,7 +51,18 @@ char* getCircCorb(Info i){
      StCirculo* ret=(StCirculo*)i;
      return ret->corb;
 }
+float getCircStrokew(Info i){
+     StCirculo* ret=(StCirculo*)i;
+     return ret->strokeWidth;
+}
 char* getCircCorp(Info i){
      StCirculo* ret=(StCirculo*)i;
      return ret->corp;
+}
+
+void setCircColors(Info i, char* corb, char* corp, float strokeWidth){
+     StCirculo* circ=i;
+     strcpy(circ->corb, corb);
+     strcpy(circ->corp, corp);
+     circ->strokeWidth=strokeWidth;
 }

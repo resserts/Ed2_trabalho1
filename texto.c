@@ -8,6 +8,7 @@ typedef struct{
      int id;
      double x, y;
      char corb[30];
+     float strokeWidth;
      char corp[30];
      char a;
      char texto[256];
@@ -24,6 +25,7 @@ Info criaTexto(int i, double x, double y, char* corb, char* corp, char a, char* 
      StTexto* txt= (StTexto*)malloc(sizeof(StTexto));
      txt->id=i;
      strcpy(txt->corb, corb);
+     txt->strokeWidth=1;
      strcpy(txt->corp, corp);
      txt->a=a;
      txt->x=x;
@@ -65,6 +67,10 @@ char* getTxtCorb(Info i){
      StTexto* ret=(StTexto*)i;
      return ret->corb;
 }
+float getTxtStrokew(Info i){
+     StTexto* ret=(StTexto*)i;
+     return ret->strokeWidth;
+}
 char* getTxtCorp(Info i){
      StTexto* ret=(StTexto*)i;
      return ret->corp;
@@ -88,4 +94,11 @@ char* getTxtWeight(Info i){
 char* getTxtSize(Info i){
      StTexto* ret=(StTexto*)i;
      return ret->size;
+}
+
+void setTxtColors(Info i, char* corb, char* corp, float strokeWidth){
+     StTexto* text=i;
+     strcpy(text->corb, corb);
+     strcpy(text->corp, corp);
+     text->strokeWidth=strokeWidth;
 }

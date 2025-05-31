@@ -1,5 +1,6 @@
 #include "smutreap.h"
 #include "boundingBox.h"
+#include "svg.h"
 #include "lista.h"
 
 #include <stdio.h>
@@ -187,8 +188,8 @@ DescritorTipoInfo getTypeInfoSrbT(SmuTreap t, Node n){
      return noaux->descritor;
 }
 
-Node promoteaux(){
-if(r==NULL){
+Node promoteaux(StSmutreap* t, double x, double y, StNode* r){
+     if(r==NULL){
           return r;
      }
      
@@ -196,10 +197,10 @@ if(r==NULL){
      if(igual(x, y, r, t->epsilon)){
           return r;
      }else if(menor(x, y, r, t->epsilon)){
-          nr = promoteaux(t, x, y, r->esq, i, d);
+          nr = promoteaux(t, x, y, r->esq);
           r->esq=nr;
      }else{
-          nr = promoteaux(t, x, y, r->dir, i, d);
+          nr = promoteaux(t, x, y, r->dir);
           r->dir=nr;
      }
      
@@ -216,6 +217,8 @@ if(r==NULL){
 void promoteNodeSmuT(SmuTreap t, Node n, double promotionRate){
      StNode* node= (StNode*)n;
      node->prioridade*=promotionRate;
+     StSmutreap* smut=t;
+     smut->raiz=promoteaux(smut, node->x, node->y, smut->raiz);
      //TODO: rebalancear de acordo com nova prioridade.
 }
 
@@ -284,6 +287,10 @@ Info getInfoSmuT(SmuTreap t, Node n){
 
 Info getBoundingBoxSmuT(SmuTreap t, Node n, double *x, double *y, double *w, double *h){
      StNode* node=(StNode*)n;
+     *x=getbbx(node->bbinfo);
+     *y=getbby(node->bbinfo);
+     *w=getbbWidth(node->bbinfo);
+     *h=getbbHeight(node->bbinfo);
      return node->bbinfo;     
 }
 
@@ -357,25 +364,50 @@ bool getNodesDentroRegiaoSmuT(SmuTreap t, double x1, double y1, double x2, doubl
      return false;
 }
 
-void getInfosDentroaux(StSmutreap* t, StNode* n, double x1, double y1, double x2, double y2, FdentroDeRegiao f, Lista L){
+void getInfosDentroaux(StSmutreap* t, StNode* n, double x1, double y1, double x2, double y2, FdentroDeRegiao f, Lista L, FILE* file){
      if(n==NULL){
           return;
      }
     // if(bbDentro(t, n, n->bbsa, x1, y1, x2, y2)){
     //      return;
     // }
+
+     
      if(f(t, n, n->bbinfo, x1, y1, x2, y2)){
-          printf("entro para inserir %i\n", getTypeInfoSrbT(t, n));
+          DescritorTipoInfo dt=getTypeInfoSrbT(t, n);
+          Info info=getInfoSmuT(t, n);
+          switch (dt) {
+               case RETANGULO:
+                    fprintf(file, "%i: Retangulo\n\tx:%f\n\ty:%f\n\twidth:%f\n\theight:%f\n\n", 
+                              getRetId(info), getRetX(info), getRetY(info), getRetWidth(info), getRetHeight(info));
+                    break;
+               case CIRCULO:
+                    fprintf(file, "%i: Circulo\n\tx:%f\n\ty:%f\n\traio:%f\n\n", 
+                              getCircId(info), getCircx(info), getCircy(info), getCircRaio(info));
+                    break;
+               case LINHA:
+                    fprintf(file, "%i: Linha\n\tx1:%f\n\ty1:%f\n\tx2:%f\n\ty2:%f\n\n", 
+                              getLinhaId(info), getLinhax1(info), getLinhay1(info), getLinhax2(info), getLinhay2(info));
+                    break;
+               case TEXTO:
+                    fprintf(file, "%i: Texto\n\tx:%f\n\ty:%f\n\tconteudo:%s\n\n", 
+                              getTxtId(info), getTxtx(info), getTxty(info), getTxt(info));
+                    break;
+               default:
+                    break;
+          }
           insertList(L, n, 0);
      }
-     getInfosDentroaux(t, n->dir, x1, y1, x2, y2, f, L);
-     getInfosDentroaux(t, n->esq, x1, y1, x2, y2, f, L);
+     getInfosDentroaux(t, n->dir, x1, y1, x2, y2, f, L, file);
+     getInfosDentroaux(t, n->esq, x1, y1, x2, y2, f, L, file);
 }
 bool getInfosDentroRegiaoSmuT(SmuTreap t, double x1, double y1, double x2, double y2,
 				 FdentroDeRegiao f, Lista L){
      StSmutreap* smut=t;
      StNode* n=smut->raiz;
-     getInfosDentroaux(smut, n, x1, y1, x2, y2, f, L);
+     FILE* log=fopen("praVer.txt", "w");
+     getInfosDentroaux(smut, n, x1, y1, x2, y2, f, L, log);
+     fclose(log);
 
      if(getValor(L, 0)){
           return true;
@@ -454,7 +486,7 @@ void killaux(StNode* n){
 }
 void killSmuTreap(SmuTreap t){
      StSmutreap* smut=t;
-	killaux(t->raiz);
+	killaux(smut->raiz);
 }
 
 double getEpsilon(SmuTreap t){

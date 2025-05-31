@@ -15,6 +15,9 @@ double getCircx(Info i);
 double getCircy(Info i);
 double getCircRaio(Info i);
 char* getCircCorb(Info i);
+float getCircStrokew(Info i);
 char* getCircCorp(Info i);
+
+void setCircColors(Info i, char* corb, char* corp, float strokeWidth);
 
 #endif
